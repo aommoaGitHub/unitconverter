@@ -1,5 +1,6 @@
 package unitconverter;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +24,7 @@ public class UnitConverterUI extends JFrame {
 	private JTextField leftText, rightText;
 	private UnitConverter converter;
 	private JButton convertbtn, clearbtn;
+	private String previousValRight = "";
 
 	/**
 	 * Initialize setting application
@@ -41,7 +43,7 @@ public class UnitConverterUI extends JFrame {
 	public void initComponent() {
 		converter = new UnitConverter();
 		// setting selected menu of unit types
-		menu = new JMenu("UnitType");
+		menu = new JMenu("UnitTypes");
 		for (UnitTypes unit : UnitTypes.class.getEnumConstants()) {
 			menuItem = new JMenuItem(unit.toString());
 			menuItem.addActionListener(new ActionListener() {
@@ -71,14 +73,19 @@ public class UnitConverterUI extends JFrame {
 
 		// setting converter body
 		leftText = new JTextField("");
+		leftText.setPreferredSize(new Dimension(100, 5));
 		leftBox = new JComboBox<>();
+		leftBox.setPreferredSize(new Dimension(150, 5));
 		leftBox.setModel(new DefaultComboBoxModel(converter.getUnits(UnitTypes.LENGTH)));
 		rightText = new JTextField("");
+		rightText.setPreferredSize(new Dimension(100, 5));
 		rightBox = new JComboBox<>();
+		rightBox.setPreferredSize(new Dimension(150, 5));
 		rightBox.setModel(new DefaultComboBoxModel(converter.getUnits(UnitTypes.LENGTH)));
 
 		body = new JPanel();
-		body.setLayout(new GridLayout(1, 7));
+//		body.setLayout(new GridLayout(1, 7));
+		body.setLayout(new BoxLayout(body, BoxLayout.X_AXIS));
 		body.add(leftText);
 		body.add(leftBox);
 		JLabel equalSign = new JLabel("=", SwingConstants.CENTER);
@@ -88,22 +95,25 @@ public class UnitConverterUI extends JFrame {
 		body.add(rightBox);
 
 		// add convert and clear button
-		convertbtn = new JButton("   Convert!   ");
+		convertbtn = new JButton("  Convert!  ");
 		convertbtn.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				double resultConvert = 0;
-				if (rightText.getText().equals("")) {
-					resultConvert = converter.convert(Double.parseDouble(leftText.getText()),
-							(Unit) leftBox.getSelectedItem(), (Unit) rightBox.getSelectedItem());
-					rightText.setText(String.format("%.4g", resultConvert));
-				} else {
-					resultConvert = converter.convert(Double.parseDouble(rightText.getText()),
+				String currentTextLeft = leftText.getText();
+				String currentTextRight = rightText.getText();
+				if (currentTextLeft.equals("") || (!(currentTextRight.equals(previousValRight))&&!(currentTextRight.equals("")))) {
+					resultConvert = converter.convert(Double.parseDouble(currentTextRight),
 							(Unit) rightBox.getSelectedItem(), (Unit) leftBox.getSelectedItem());
 					leftText.setText(String.format("%.4g", resultConvert));
+				} else {
+					resultConvert = converter.convert(Double.parseDouble(currentTextLeft),
+							(Unit) leftBox.getSelectedItem(), (Unit) rightBox.getSelectedItem());
+					rightText.setText(String.format("%.4g", resultConvert));
+					
 				}
-				System.out.println(resultConvert);
+				previousValRight = currentTextRight;
 
 			}
 		});

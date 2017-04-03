@@ -14,7 +14,11 @@ public class UnitConverter {
 	 *
 	 */
 	public enum UnitTypes{
-		LENGTH("Length"), AREA("Area"), WEIGHT("Weight");
+		WEIGHT("Weight"),
+		LENGTH("Length"), 
+		AREA("Area"), 
+		VOLUME("Volume");
+		
 		
 		private final String name;
 		
@@ -48,6 +52,8 @@ public class UnitConverter {
 			return Area.class.getEnumConstants();
 		case WEIGHT:
 			return Weight.class.getEnumConstants();
+		case VOLUME:
+			return Volume.class.getEnumConstants();
 		default:
 			System.out.println("Invalid unit types.");
 			return null;
@@ -62,9 +68,6 @@ public class UnitConverter {
 	 * @return number of conversion of <code>toUnit</code>
 	 */
 	public double convert(double inputNumber, Unit fromUnit, Unit toUnit) {
-		System.out.println("innum"+inputNumber);
-		System.out.println("from"+fromUnit.toString());
-		System.out.println("to"+toUnit.toString());
 		return inputNumber * fromUnit.getValue() / toUnit.getValue();
 	}
 }
